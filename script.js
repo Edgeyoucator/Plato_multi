@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
     passwordField.value = "reality";
   }
 
-  // 🔁 Firebase sync listener: whenever placements change, update the DOM
+  // 🔁 Firebase sync listener with null guard
   firebase.database().ref("sharedState/placements").on("value", snapshot => {
     const data = snapshot.val();
     if (!data) return;
@@ -150,21 +150,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ["image", "caption"].forEach(type => {
       placements[type].forEach((id, index) => {
+        if (!id) return; // ✅ Skip null or empty slots
+
         const zone = document.querySelector(`.drop-zone[data-type="${type}"][data-slot="${index}"]`);
         const el = document.querySelector(`.draggable[data-id="${id}"]`);
 
         if (!zone || !el) return;
 
-        // Remove from current parent if it's another drop zone
         const currentParent = el.parentElement;
         if (currentParent && currentParent !== zone && currentParent.classList.contains("drop-zone")) {
-          currentParent.innerHTML = "";
+          if (currentParent.contains(el)) currentParent.removeChild(el);
         }
 
-        // Append to new drop zone if not already there
         if (!zone.contains(el)) {
-          zone.innerHTML = "";
           zone.appendChild(el);
+          attachDragEvents(el);
         }
       });
     });
