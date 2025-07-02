@@ -6,6 +6,8 @@ let placements = {
 let draggedElement = null;
 let draggedType = null;
 
+const db = firebase.database();
+
 document.addEventListener("DOMContentLoaded", () => {
   const dropZones = document.querySelectorAll(".drop-zone");
   const allBanks = document.querySelectorAll(".drag-items");
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       zone.appendChild(draggedElement);
       attachDragEvents(draggedElement);
 
-      firebase.database().ref("sharedState/placements").set(placements);
+      db.ref("sharedState/placements").set(placements);
       checkFinalPassword();
     });
   });
@@ -84,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       bank.appendChild(draggedElement);
       attachDragEvents(draggedElement);
 
-      firebase.database().ref("sharedState/placements").set(placements);
+      db.ref("sharedState/placements").set(placements);
       checkFinalPassword();
     });
   });
@@ -145,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🔁 Firebase sync listener with null guard
-  firebase.database().ref("sharedState/placements").on("value", snapshot => {
+  db.ref("sharedState/placements").on("value", snapshot => {
     const data = snapshot.val();
     if (!data) return;
 
@@ -188,9 +190,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // 🔒 Ensure initial placements exist
-  firebase.database().ref("sharedState/placements").once("value").then(snapshot => {
+  db.ref("sharedState/placements").once("value").then(snapshot => {
     if (!snapshot.exists()) {
-      firebase.database().ref("sharedState/placements").set(placements);
+      db.ref("sharedState/placements").set(placements);
     }
   });
 });
