@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function attachDragEvents(el) {
     el.setAttribute("draggable", "true");
 
+    if (el.dataset.dragEventsAttached === "true") return;
+    el.dataset.dragEventsAttached = "true";
+
     el.addEventListener("dragstart", () => {
       draggedElement = el;
       const parentBank = el.closest(".drag-items");
