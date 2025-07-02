@@ -37,9 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".draggable").forEach(attachDragEvents);
 
   dropZones.forEach(zone => {
-    zone.addEventListener("dragover", e => e.preventDefault());
+    zone.addEventListener("dragover", e => e.preventDefault(), { capture: true });
 
-    zone.addEventListener("drop", () => {
+    const dropHandler = () => {
       if (!draggedElement) return;
 
       const slot = +zone.dataset.slot;
@@ -65,7 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       db.ref("sharedState/placements").set(placements);
       checkFinalPassword();
-    });
+    };
+
+    zone.addEventListener("drop", dropHandler, { capture: true });
   });
 
   allBanks.forEach(bank => {
