@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   allBanks.forEach(bank => {
-    bank.addEventListener("dragover", e => e.preventDefault());
+    bank.addEventListener("dragover", e => e.preventDefault(), { capture: true });
 
     bank.addEventListener("drop", () => {
       if (!draggedElement) return;
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       attachDragEvents(draggedElement);
 
       checkFinalPassword(); // <- also check here
-    });
+    }, { capture: true });
   });
 
   const correctPairs = [
