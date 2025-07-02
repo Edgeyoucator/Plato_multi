@@ -150,12 +150,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ["image", "caption"].forEach(type => {
       placements[type].forEach((id, index) => {
-        if (!id) return; // ✅ Skip null or empty slots
-
         const zone = document.querySelector(`.drop-zone[data-type="${type}"][data-slot="${index}"]`);
+        if (!zone) return;
+
+        if (!id) {
+          const existing = zone.querySelector(".draggable");
+          if (existing) {
+            const bank = document.querySelector(`.drag-items[data-type="${type}"]`);
+            if (bank) {
+              bank.appendChild(existing);
+              attachDragEvents(existing);
+            } else {
+              existing.remove();
+            }
+          }
+          return;
+        }
+
         const el = document.querySelector(`.draggable[data-id="${id}"]`);
 
-        if (!zone || !el) return;
+        if (!el) return;
 
         const currentParent = el.parentElement;
         if (currentParent && currentParent !== zone && currentParent.classList.contains("drop-zone")) {
